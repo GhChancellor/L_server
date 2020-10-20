@@ -29,9 +29,9 @@ public class MQTTServer {
     private List<String> ON_LINE = new LinkedList<>();
 
     public void start() throws IOException {
-        final Server mqtt_broke = new Server();
+        final Server mqtt_broker = new Server();
 
-        mqtt_broke.startServer(new ResourceLoaderConfig(new ClasspathResourceLoader()),
+        mqtt_broker.startServer(new ResourceLoaderConfig(new ClasspathResourceLoader()),
                 Collections.singletonList(new AbstractInterceptHandler() {
                     @Override
                     public String getID() {
@@ -55,17 +55,17 @@ public class MQTTServer {
 
                     @Override
                     public void onPublish(InterceptPublishMessage msg) {
-                        final String decodedPayload = new String(ByteBufUtil.getBytes(msg.getPayload()), UTF_8);
-                        System.out.println("Received on topic: " + msg.getTopicName() + " content: " + decodedPayload);
-                        String topic = msg.getTopicName();
+                        final String decodedPayload
+                                = new String(ByteBufUtil.getBytes(msg.getPayload()), UTF_8);
+                        System.out.println("Received on topic: " + msg.getTopicName()
+                                + " content: " + decodedPayload);
                     }
                 })
         );
 
-        Runtime.getRuntime().addShutdownHook( new Thread(() -> {
-            mqtt_broke.stopServer();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            mqtt_broker.stopServer();
         }));
-        
-        
+
     }
 }
