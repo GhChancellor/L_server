@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.l_server;
+package com.mycompany.esecizio01;
 
 import static com.hazelcast.client.impl.protocol.util.UnsafeBuffer.UTF_8;
 import io.moquette.interception.AbstractInterceptHandler;
@@ -57,6 +57,7 @@ public class MQTTServer {
                     public void onPublish(InterceptPublishMessage msg) {
                         final String decodedPayload
                                 = new String(ByteBufUtil.getBytes(msg.getPayload()), UTF_8);
+                        
                         System.out.println("Received on topic: " + msg.getTopicName()
                                 + " content: " + decodedPayload);
                     }

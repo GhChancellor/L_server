@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.l_server;
+package com.mycompany.esecizio01;
 
 /**
  *
  * @author lele
  */
-public class Main {
+public class MainServer01 {
     
     public static void main(String[] args) {
         
