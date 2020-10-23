@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.esecizio01;
+package com.mycompany.esecizio01.mqtt;
 
 import static com.hazelcast.client.impl.protocol.util.UnsafeBuffer.UTF_8;
 import io.moquette.interception.AbstractInterceptHandler;
