@@ -5,7 +5,6 @@
  */
 package com.mycompany.esecizio02;
 
-import com.mycompany.esecizio02.mqtt.Client_Mqtt;
 import com.mycompany.esecizio02.mqtt.MQTTServer;
 
 /**

@@ -29,6 +29,10 @@ public class MQTTServer {
 
     private List<String> ON_LINE = new LinkedList<>();
 
+    public MQTTServer() {
+
+    }
+
     public void start() throws IOException {
         final Server mqtt_broker = new Server();
 
@@ -51,9 +55,9 @@ public class MQTTServer {
 
                     @Override
                     public void onConnect(InterceptConnectMessage msg) {
+                        System.out.println("si p connesso " + msg.getClientID());
+                        Client_Mqtt.getInstance().publish("prova01", "benvenuto");
                         ON_LINE.add(msg.getClientID());
-                        // news UserConnected
-//                        Client_Mqtt.getInstance().publish("UserConnected", "asdasdsdasdas");
                     }
 
                     @Override
@@ -66,6 +70,8 @@ public class MQTTServer {
                     }
                 })
         );
+
+        Client_Mqtt.getInstance().connect();
 
         Runtime.getRuntime()
                 .addShutdownHook(new Thread(() -> {

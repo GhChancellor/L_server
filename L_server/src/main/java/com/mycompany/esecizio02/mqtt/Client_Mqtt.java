@@ -75,7 +75,9 @@ public class Client_Mqtt implements MqttCallback {
     }
 
     public void connect() {
+        System.out.println("1");
         try {
+            System.out.println("2");
             initializeConnection();
 
             MqttMessage message = new MqttMessage(content.getBytes());
@@ -88,6 +90,7 @@ public class Client_Mqtt implements MqttCallback {
     }
 
     public void publish(String topic, String message) {
+        System.out.println("1 - publish" + message) ;
         try {
             MqttMessage messageMM = new MqttMessage(message.getBytes());
             messageMM.setQos(qos);
@@ -112,6 +115,7 @@ public class Client_Mqtt implements MqttCallback {
         System.out.println("Client del server\n");
         System.out.println("TOPIC: " + topic);
         System.out.println("MESSAGE: " + new String(mm.getPayload()) + "\n");
+        Client_Mqtt.getInstance().publish("prova01", "sdfsdfsdfsdfsdfsdfsdfsdfsdfsdsd");
     }
 
     @Override
@@ -122,3 +126,9 @@ public class Client_Mqtt implements MqttCallback {
     }
 
 }
+
+/*
+
+                        // news UserConnected
+                        Client_Mqtt.getInstance().publish("UserConnected", "asdasdsdasdas");
+*/
