@@ -5,6 +5,7 @@
  */
 package com.mycompany.esecizio02;
 
+import com.mycompany.esecizio02.mqtt.Client_Mqtt;
 import com.mycompany.esecizio02.mqtt.MQTTServer;
 
 /**
@@ -17,7 +18,7 @@ public class MainServer02 {
         
         try {
             MQTTServer mQTTServer = new MQTTServer();
-            mQTTServer.start();
+            mQTTServer.start();            
         } catch (Exception e) {
             e.printStackTrace();
         }

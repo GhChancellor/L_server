@@ -62,11 +62,11 @@ public class Client_Mqtt implements MqttCallback {
             System.out.println("Conneting to Broker" + broker);
             sampleClient.connect(connectOptions);
             System.out.println("Connected to broker");
-            
+
             /* subscribe section */
             sampleClient.subscribe("UserConnected");
             sampleClient.setCallback(this);
-            
+
             System.out.println("Client is connected");
 
         } catch (Exception e) {
@@ -75,14 +75,12 @@ public class Client_Mqtt implements MqttCallback {
     }
 
     public void connect() {
-        String topic = "news";
-
         try {
             initializeConnection();
 
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
-            sampleClient.publish(topic, message);
+            sampleClient.publish("news", message);
             System.out.println("Message published");
         } catch (MqttException ex) {
             ex.printStackTrace();
@@ -93,11 +91,11 @@ public class Client_Mqtt implements MqttCallback {
         try {
             MqttMessage messageMM = new MqttMessage(message.getBytes());
             messageMM.setQos(qos);
-            
+
             if (sampleClient == null || !sampleClient.isConnected()) {
                 initializeConnection();
             }
-            
+
             sampleClient.publish(topic, messageMM);
         } catch (Exception ex) {
             Logger.getLogger(Client_Mqtt.class.getName()).log(Level.SEVERE, null, ex);
@@ -111,13 +109,15 @@ public class Client_Mqtt implements MqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage mm) throws Exception {
+        System.out.println("Client del server\n");
         System.out.println("TOPIC: " + topic);
-        System.out.println("MESSAGE: " + new String(mm.getPayload()));
-
+        System.out.println("MESSAGE: " + new String(mm.getPayload()) + "\n");
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken imdt) {
+        // news UserConnected
+//        Client_Mqtt.getInstance().publish("UserConnected", "asdasdsdasdas");
 
     }
 

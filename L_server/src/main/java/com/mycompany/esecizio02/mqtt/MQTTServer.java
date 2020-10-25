@@ -7,6 +7,7 @@ package com.mycompany.esecizio02.mqtt;
 
 import static com.hazelcast.client.impl.protocol.util.UnsafeBuffer.UTF_8;
 import io.moquette.interception.AbstractInterceptHandler;
+import io.moquette.interception.messages.InterceptAcknowledgedMessage;
 import io.moquette.interception.messages.InterceptConnectMessage;
 import io.moquette.interception.messages.InterceptConnectionLostMessage;
 import io.moquette.interception.messages.InterceptDisconnectMessage;
@@ -51,22 +52,33 @@ public class MQTTServer {
                     @Override
                     public void onConnect(InterceptConnectMessage msg) {
                         ON_LINE.add(msg.getClientID());
+                        // news UserConnected
+//                        Client_Mqtt.getInstance().publish("UserConnected", "asdasdsdasdas");
                     }
 
                     @Override
                     public void onPublish(InterceptPublishMessage msg) {
                         final String decodedPayload
                                 = new String(ByteBufUtil.getBytes(msg.getPayload()), UTF_8);
-                        
+
                         System.out.println("Received on topic: " + msg.getTopicName()
                                 + " content: " + decodedPayload);
                     }
                 })
         );
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            mqtt_broker.stopServer();
-        }));
+        Runtime.getRuntime()
+                .addShutdownHook(new Thread(() -> {
+                    mqtt_broker.stopServer();
+                }
+                ));
 
     }
+
+    public void prova() {
+        // news UserConnected
+        Client_Mqtt.getInstance().publish("UserConnected", "asdasdsdasdas");
+
+    }
+
 }
