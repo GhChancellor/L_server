@@ -26,10 +26,9 @@ public class Client_Mqtt implements MqttCallback {
     private final int qos = 2;
     private MqttClient sampleClient = null;
 
-    private String content = "Visit www.hascode.com! :D";
     private String broker = "tcp://0.0.0.0:1883";
-    private String clientId = "client : " + new Date().getTime();
-
+    private String clientId = "Client del server : " + new Date().getTime();
+    
     public static Client_Mqtt getInstance() {
         if (instance == null) {
             instance = new Client_Mqtt();
@@ -48,6 +47,9 @@ public class Client_Mqtt implements MqttCallback {
         }
     }
 
+    /**
+     * inizializza il client e accede a un canale 
+     */
     private void initializeConnection() {
         try {
             /* inizializza il client */
@@ -59,46 +61,43 @@ public class Client_Mqtt implements MqttCallback {
             connectOptions.setCleanSession(true);
 
             /* Conneting to Broker */
-            System.out.println("Conneting to Broker" + broker);
             sampleClient.connect(connectOptions);
-            System.out.println("Connected to broker");
-
+            System.out.println("Connected to broker" + broker );
+            
             /* subscribe section */
             sampleClient.subscribe("UserConnected");
+            sampleClient.subscribe("Talk");
             sampleClient.setCallback(this);
+            
+            publish("UserConnected", "is connected\n");
 
-            System.out.println("Client is connected");
-
+            
         } catch (Exception e) {
             Logger.getLogger(Client_Mqtt.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
     public void connect() {
-        System.out.println("1");
-        try {
-            System.out.println("2");
-            initializeConnection();
-
-            MqttMessage message = new MqttMessage(content.getBytes());
-            message.setQos(qos);
-            sampleClient.publish("news", message);
-            System.out.println("Message published");
-        } catch (MqttException ex) {
-            ex.printStackTrace();
-        }
+        initializeConnection();        
     }
 
+    /**
+     * Public message
+     * @param topic
+     * @param message 
+     */
     public void publish(String topic, String message) {
-        System.out.println("1 - publish" + message) ;
+        String _message = clientId + " " + message;
+                
+        
         try {
-            MqttMessage messageMM = new MqttMessage(message.getBytes());
+            MqttMessage messageMM = new MqttMessage(_message.getBytes());
             messageMM.setQos(qos);
-
+            
             if (sampleClient == null || !sampleClient.isConnected()) {
                 initializeConnection();
             }
-
+            
             sampleClient.publish(topic, messageMM);
         } catch (Exception ex) {
             Logger.getLogger(Client_Mqtt.class.getName()).log(Level.SEVERE, null, ex);
@@ -110,25 +109,22 @@ public class Client_Mqtt implements MqttCallback {
 
     }
 
+    /**
+     * Riceve un messaggio dal server e lo mette a video
+     * Dal server metodo public
+     * @param topic
+     * @param mm
+     * @throws Exception 
+     */
     @Override
     public void messageArrived(String topic, MqttMessage mm) throws Exception {
-        System.out.println("Client del server\n");
         System.out.println("TOPIC: " + topic);
         System.out.println("MESSAGE: " + new String(mm.getPayload()) + "\n");
-        Client_Mqtt.getInstance().publish("prova01", "sdfsdfsdfsdfsdfsdfsdfsdfsdfsdsd");
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken imdt) {
-        // news UserConnected
-//        Client_Mqtt.getInstance().publish("UserConnected", "asdasdsdasdas");
 
     }
 
 }
-
-/*
-
-                        // news UserConnected
-                        Client_Mqtt.getInstance().publish("UserConnected", "asdasdsdasdas");
-*/

@@ -5,9 +5,7 @@
  */
 package com.mycompany.esecizio02.mqtt;
 
-import static com.hazelcast.client.impl.protocol.util.UnsafeBuffer.UTF_8;
 import io.moquette.interception.AbstractInterceptHandler;
-import io.moquette.interception.messages.InterceptAcknowledgedMessage;
 import io.moquette.interception.messages.InterceptConnectMessage;
 import io.moquette.interception.messages.InterceptConnectionLostMessage;
 import io.moquette.interception.messages.InterceptDisconnectMessage;
@@ -15,7 +13,6 @@ import io.moquette.interception.messages.InterceptPublishMessage;
 import io.moquette.server.Server;
 import io.moquette.server.config.ClasspathResourceLoader;
 import io.moquette.server.config.ResourceLoaderConfig;
-import io.netty.buffer.ByteBufUtil;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -55,18 +52,13 @@ public class MQTTServer {
 
                     @Override
                     public void onConnect(InterceptConnectMessage msg) {
-                        System.out.println("si p connesso " + msg.getClientID());
-                        Client_Mqtt.getInstance().publish("prova01", "benvenuto");
                         ON_LINE.add(msg.getClientID());
                     }
 
                     @Override
                     public void onPublish(InterceptPublishMessage msg) {
-                        final String decodedPayload
-                                = new String(ByteBufUtil.getBytes(msg.getPayload()), UTF_8);
-
-                        System.out.println("Received on topic: " + msg.getTopicName()
-                                + " content: " + decodedPayload);
+//                        final String decodedPayload
+//                                = new String(ByteBufUtil.getBytes(msg.getPayload()), UTF_8);
                     }
                 })
         );
@@ -80,11 +72,4 @@ public class MQTTServer {
                 ));
 
     }
-
-    public void prova() {
-        // news UserConnected
-        Client_Mqtt.getInstance().publish("UserConnected", "asdasdsdasdas");
-
-    }
-
 }
