@@ -5,7 +5,9 @@
  */
 package com.mycompany.esecizio02.mqtt;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -24,11 +26,13 @@ public class Client_Mqtt implements MqttCallback {
 
     private static Client_Mqtt instance = null;
     private final int qos = 2;
-    private MqttClient sampleClient = null;
+    private MqttClient client = null;
 
     private String broker = "tcp://0.0.0.0:1883";
     private String clientId = "Client del server : " + new Date().getTime();
-    
+    private final String userConnected = "UserConnected";
+    private List< String> allUsers = new ArrayList<>();
+
     public static Client_Mqtt getInstance() {
         if (instance == null) {
             instance = new Client_Mqtt();
@@ -41,64 +45,64 @@ public class Client_Mqtt implements MqttCallback {
         super();
 
         try {
-            sampleClient = new MqttClient(broker, clientId, new MemoryPersistence());
+            client = new MqttClient(broker, clientId, new MemoryPersistence());
         } catch (MqttException ex) {
             Logger.getLogger(Client_Mqtt.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     /**
-     * inizializza il client e accede a un canale 
+     * inizializza il client e accede a un canale
      */
     private void initializeConnection() {
         try {
             /* inizializza il client */
-            if (sampleClient == null) {
-                sampleClient = new MqttClient(broker, clientId, new MemoryPersistence());
+            if (client == null) {
+                client = new MqttClient(broker, clientId, new MemoryPersistence());
             }
 
             MqttConnectOptions connectOptions = new MqttConnectOptions();
             connectOptions.setCleanSession(true);
 
             /* Conneting to Broker */
-            sampleClient.connect(connectOptions);
-            System.out.println("Connected to broker" + broker );
-            
-            /* subscribe section */
-            sampleClient.subscribe("UserConnected");
-            sampleClient.subscribe("Talk");
-            sampleClient.setCallback(this);
-            
-            publish("UserConnected", "is connected\n");
+            client.connect(connectOptions);
+            System.out.println("Connected to broker" + broker);
 
-            
+            /* subscribe section */
+            client.subscribe("UserConnected");
+            client.subscribe("allusers");
+            client.subscribe("Talk");
+            client.setCallback(this);
+
+            /* Public message on channel UserConnected*/
+            publish("UserConnected", "Client " + clientId + " is connected. \n");
+
         } catch (Exception e) {
             Logger.getLogger(Client_Mqtt.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
     public void connect() {
-        initializeConnection();        
+        initializeConnection();
     }
 
     /**
      * Public message
+     *
      * @param topic
-     * @param message 
+     * @param message
      */
     public void publish(String topic, String message) {
-        String _message = clientId + " " + message;
-                
-        
+
         try {
-            MqttMessage messageMM = new MqttMessage(_message.getBytes());
+            MqttMessage messageMM = new MqttMessage(message.getBytes());
             messageMM.setQos(qos);
-            
-            if (sampleClient == null || !sampleClient.isConnected()) {
+
+            if (client == null || !client.isConnected()) {
                 initializeConnection();
             }
-            
-            sampleClient.publish(topic, messageMM);
+
+            client.publish(topic, messageMM);
         } catch (Exception ex) {
             Logger.getLogger(Client_Mqtt.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -110,14 +114,24 @@ public class Client_Mqtt implements MqttCallback {
     }
 
     /**
-     * Riceve un messaggio dal server e lo mette a video
-     * Dal server metodo public
+     * Riceve un messaggio dal server e lo mette a video Dal server metodo
+     * public
+     *
      * @param topic
      * @param mm
-     * @throws Exception 
+     * @throws Exception
      */
     @Override
-    public void messageArrived(String topic, MqttMessage mm) throws Exception {
+    public void messageArrived(String topic, MqttMessage mm) throws Exception {        
+
+        if (topic.equals(userConnected)) {
+            allUsers.add(new String(mm.getPayload()));
+
+            for (String allUser : allUsers) {
+                publish("allusers", allUser);
+            }
+        }
+
         System.out.println("TOPIC: " + topic);
         System.out.println("MESSAGE: " + new String(mm.getPayload()) + "\n");
     }
